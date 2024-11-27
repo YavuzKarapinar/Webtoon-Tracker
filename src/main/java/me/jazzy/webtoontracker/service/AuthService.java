@@ -5,6 +5,10 @@ import me.jazzy.webtoontracker.dto.InformationBody;
 import me.jazzy.webtoontracker.model.User;
 import me.jazzy.webtoontracker.repository.UserRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -16,6 +20,8 @@ public class AuthService {
     private final EncryptionService encryptionService;
     private UserService userService;
     private UserRepository userRepository;
+    private AuthenticationManager authenticationManager;
+    private JWTService jwtService;
 
     public InformationBody registerUser(User user) {
         boolean isUserAlreadyRegistered = userRepository.findByUsernameIgnoreCase(user.getUsername()).isPresent();
@@ -46,8 +52,19 @@ public class AuthService {
             throw new RuntimeException("Incorrect password");
         }
 
+        Authentication authentication =
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(
+                                user.getUsername(),
+                                user.getPassword()
+                        )
+                );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String token = jwtService.generateJWT(userFound);
+
         return new InformationBody(
-                "Successfully logged in.",
+                token,
                 HttpStatus.OK.value(),
                 System.currentTimeMillis()
         );
