@@ -1,9 +1,7 @@
 package me.jazzy.webtoontracker.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,6 +21,10 @@ public class User implements UserDetails {
 
     private String username;
     private String password;
+
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.EAGER)
+    private List<Webtoon> webtoons;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
