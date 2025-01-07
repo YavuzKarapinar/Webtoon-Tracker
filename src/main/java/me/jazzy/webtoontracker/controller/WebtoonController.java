@@ -9,6 +9,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/webtoons")
@@ -35,6 +36,12 @@ public class WebtoonController {
     @PutMapping
     public ResponseEntity<Webtoon> updateWebtoon(@RequestBody Webtoon webtoon) {
         return ResponseEntity.ok(webtoonService.updateWebtoon(webtoon));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Webtoon> patchWebtoon(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
+        Webtoon updatedWebtoon = webtoonService.patchWebtoon(id, updates);
+        return ResponseEntity.ok(updatedWebtoon);
     }
 
     @DeleteMapping("/{id}")

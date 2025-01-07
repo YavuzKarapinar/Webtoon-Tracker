@@ -17,6 +17,8 @@ public class Webtoon {
     private String name;
     private String description;
     private String genre;
+    @Enumerated(EnumType.STRING)
+    private ListType listType;
 
     @JsonIgnore
     @ManyToOne
